@@ -1,5 +1,6 @@
-package com.example.LearnAI.processing.entity;
+package com.example.LearnAI.course.entity;
 
+import com.example.LearnAI.auth.entity.User;
 import com.example.LearnAI.document.entity.Document;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,28 +10,37 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "processing_jobs")
+@Table(name = "courses")
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProcessingJob {
+public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "document_id", nullable = false, unique = true)
     private Document document;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private JobStatus status = JobStatus.PENDING;
+    @Column(nullable = false)
+    private String title;
 
-    @Column(name = "error_message", columnDefinition = "TEXT")
-    private String errorMessage;
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("orderIndex ASC")
+    private List<Section> sections = new ArrayList<>();
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -41,3 +41,6 @@ docs/
 
 ### Claude Code ###
 .claude/
+
+### Uploads ###
+uploads/
